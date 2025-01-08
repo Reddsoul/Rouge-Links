@@ -1,0 +1,155 @@
+@startuml CD
+title "Dice Golf & Speed Golf - Core UML Diagram"
+
+/'
+  LEGEND:
+   - Fields marked with a '+' are public, '-' are private, '#' are protected.
+   - Enums hold constant values or categories used by classes (e.g., HazardType).
+   - Methods describe the core logic, such as rolling dice or applying hazard penalties.
+'/
+
+' ------------------
+'      ENUMS
+' ------------------
+enum GameMode {
+  DICE_GOLF
+  SPEED_GOLF
+}
+
+enum HazardType {
+  WATER
+  SAND
+  SLOPE
+  TREES
+  ROUGH
+  FAIRWAY
+}
+
+enum CourseType {
+  SHORT_COURSE
+  MEDIUM_COURSE
+  LONG_COURSE
+}
+
+enum ClubType {
+  DRIVER
+  IRON
+  PUTTER
+}
+
+' ------------------
+'   KEY CLASSES
+' ------------------
+
+' The main engine controlling the flow of the game
+class GameEngine {
+  - currentMode: GameMode
+  - dice: Dice
+  - activeCourse: Course
+  - player: Player
+  - strokeCount: int
+
+  + startGame(mode: GameMode, courseType: CourseType)
+  + takeShot(clubType: ClubType, direction: Direction): void
+  + applyHazardEffects(): void
+  + checkVictoryCondition(): boolean
+  + endTurn(): void
+  + calculateScore(): int
+  + useMulligan(): void
+}
+
+' The dice logic for Dice Golf mode
+class Dice {
+  + rollD6(): int
+}
+
+' Represents the human or AI golfer
+class Player {
+  - totalStrokes: int
+  - mulligansRemaining: int
+  + incrementStrokes(count: int): void
+  + decrementMulligan(): void
+  + getStrokes(): int
+  + getMulligans(): int
+}
+
+' Represents the state and position of the ball
+class Ball {
+  - x: int
+  - y: int
+  + move(dx: int, dy: int): void
+  + setPosition(x: int, y: int): void
+  + getPosition(): (int, int)
+}
+
+' A Course has a grid of cells that might contain hazards
+class Course {
+  - width: int
+  - height: int
+  - cells: Cell[][]        ' 2D array of Cell objects
+  - holePosition: (int, int)
+  + generate(courseType: CourseType): void
+  + getCell(x: int, y: int): Cell
+  + getHolePosition(): (int, int)
+  + isValidPosition(x: int, y: int): boolean
+}
+
+' Each cell on the grid can be a hazard, fairway, or other terrain
+class Cell {
+  - terrain: HazardType
+  + getTerrain(): HazardType
+}
+
+' Represents any hazard or terrain effect
+abstract class Hazard {
+  # hazardType: HazardType
+  + applyEffect(gameEngine: GameEngine): void
+}
+
+' ------------------
+'   CLUB CLASSES
+' ------------------
+class Club {
+  # clubType: ClubType
+  + getType(): ClubType
+  + getBaseDistance(): int
+}
+
+class Driver extends Club {
+  + getBaseDistance(): int
+}
+
+class Iron extends Club {
+  + getBaseDistance(): int
+}
+
+class Putter extends Club {
+  + getBaseDistance(): int
+}
+
+' ------------------
+'   RELATIONSHIPS
+' ------------------
+
+' GameEngine uses Dice
+GameEngine "1" -- "1" Dice : uses >
+
+' GameEngine manages a Course
+GameEngine "1" o-- "1" Course : active >
+
+' GameEngine manages a Player
+GameEngine "1" o-- "1" Player : controls >
+
+' GameEngine manages a Ball
+GameEngine "1" o-- "1" Ball : moves >
+
+' Course has a 2D grid of Cells
+Course "1" o-- "many" Cell : grid >
+
+' A Cell can contain a Hazard
+Cell "1" --> "0..1" Hazard : contains >
+
+' Clubs are used for different shots
+GameEngine "1" -->  Club : can instantiate
+
+@enduml

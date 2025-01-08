@@ -1,0 +1,53 @@
+@startuml DB
+title "SQLite Database - UML Schema Example"
+
+/'
+  LEGEND:
+    - Each "entity" block represents a table in the database.
+    - Fields marked [PK] are primary keys.
+    - Fields marked [FK] are foreign keys referencing another table.
+    - The notation "||--|{" means "one-to-many" relationship.
+'/
+
+entity "players" as T1 {
+    * id: INTEGER [PK]
+    --
+    name: TEXT
+    created_at: DATETIME
+}
+
+entity "saves" as T2 {
+    * id: INTEGER [PK]
+    --
+    player_id: INTEGER [FK -> players.id]
+    current_mode: TEXT
+    strokes: INTEGER
+    mulligans_remaining: INTEGER
+    ball_pos_x: INTEGER
+    ball_pos_y: INTEGER
+    saved_at: DATETIME
+}
+
+entity "courses" as T3 {
+    * id: INTEGER [PK]
+    --
+    course_type: TEXT     -- e.g., Short, Medium, Long
+    width: INTEGER
+    height: INTEGER
+    created_at: DATETIME
+}
+
+entity "cells" as T4 {
+    * id: INTEGER [PK]
+    --
+    course_id: INTEGER [FK -> courses.id]
+    x: INTEGER
+    y: INTEGER
+    hazard_type: TEXT     -- e.g., WATER, SAND, SLOPE, etc.
+}
+
+' Relationships
+T1 ||--|{ T2 : "1 player -> many saves"
+T3 ||--|{ T4 : "1 course -> many cells"
+
+@enduml

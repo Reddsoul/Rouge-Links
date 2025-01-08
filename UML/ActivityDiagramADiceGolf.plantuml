@@ -1,0 +1,38 @@
+@startuml DG
+title "Dice Golf (Roguelike) - High-Level Activity Diagram"
+
+start
+:Initialize Game (Dice Golf Mode);
+:Generate/Load Course;
+:Place Ball at Start Position;
+:Initialize Player Stats (strokes=0, mulligans=6);
+
+repeat
+  :Player decides shot type:
+  - Roll Dice (d6);
+  - Apply +1 if on Fairway;
+  - Apply -1 if in Sand;
+  - Consider optional re-roll if Tee-off;
+  if (Use Mulligan?) then (Yes)
+    :Use Mulligan (decrement mulligans);
+    :Add +1 to stroke total;
+    :Re-roll dice or re-attempt shot;
+  else (No)
+  endif
+
+  :Move ball based on final roll result;
+  :Apply Hazards:
+  - Water => +1 stroke penalty & move to nearest fairway
+  - Sand => distance -1
+  - Slope => shift ball 1 space
+  - Trees => only pass if from fairway
+  :Increment stroke count;
+
+  if (Ball in Hole?) then (Yes)
+    stop
+  else (No)
+  endif
+repeat while (Strokes or mulligans still available?)
+
+:Game Over;
+@enduml
