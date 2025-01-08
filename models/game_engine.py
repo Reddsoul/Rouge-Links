@@ -23,11 +23,11 @@ class GameEngine:
         self.ball = Ball()
 
         # Generate or load a course
-        width, height = 10, 6  # Example defaults
+        width, height = 8, 13  # Example defaults
         if courseType == CourseType.MEDIUM_COURSE:
-            width, height = 12, 8
+            width, height = 10, 15
         elif courseType == CourseType.LONG_COURSE:
-            width, height = 16, 10
+            width, height = 12, 17
 
         self.activeCourse = Course(width, height, courseType)
         self.activeCourse.generate()

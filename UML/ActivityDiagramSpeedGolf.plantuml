@@ -1,0 +1,38 @@
+@startuml SG
+title "Speed Golf - High-Level Activity Diagram"
+
+start
+:Initialize Game (Speed Golf Mode);
+:Generate/Load Course;
+:Place Ball at Start Position;
+:Initialize Player Stats (strokes=0);
+
+repeat
+  :Player chooses a Club:
+  - Driver (6 spaces, fairway only)
+  - Iron (3 spaces, 2 from sand)
+  - Putter (1 space)
+  :Determine movement distance based on Club + terrain;
+
+  :Move Ball;
+  :Check Hazards:
+    - Water => +1 stroke, move back to nearest fairway
+    - Sand Trap => -1 distance unless using Iron
+    - Trees => only pass if from fairway (if applicable);
+
+  if (Overshoot Hole by <= 1?) then (Yes)
+    :No penalty;
+  else if (Overshoot Hole > 1?) then (Yes)
+    :+1 stroke penalty;
+  endif
+
+  :Increment stroke count;
+
+  if (Ball in Hole?) then (Yes)
+    stop
+  else (No)
+  endif
+repeat while (Not in hole)
+
+:Game Over;
+@enduml
